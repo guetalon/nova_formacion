@@ -1,0 +1,7 @@
+server:
+  servlet.context-path: /bookstore
+  port: 8081
+
+logging:
+  level:
+    root: INFO

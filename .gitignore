@@ -1,0 +1,6 @@
+.metadata/
+2021/bookStoreHateoas/.mvn/
+2021/bookStoreJPA/.mvn/
+2021/bookStoreKafka/.mvn/
+2021/bookStoreMongo/.mvn/
+2021/bookStoreRest/.mvn/

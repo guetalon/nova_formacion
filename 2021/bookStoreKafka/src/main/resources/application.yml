@@ -1,0 +1,18 @@
+server:
+  servlet.context-path: /bookstore
+  port: 8081
+
+logging:
+  level:
+    root: INFO
+
+kafka:
+  topic:
+    name: registry
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: registry-consumer
+
