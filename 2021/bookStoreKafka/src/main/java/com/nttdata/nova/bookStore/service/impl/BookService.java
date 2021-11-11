@@ -25,41 +25,14 @@ public class BookService implements IBookService{
 	@Autowired
 	private IBookRepository bookRepository;
 	
-	@Autowired
-	private IEditorialRepository editorialService;
-	
 	@Override
 	public BookDto save(BookDto bookDto) {
-		if(bookDto.getId()!=0) {
-			throw new InvalidIdException(bookDto.getId());
-		}
-		
-		if(bookDto.getPublish().after(Calendar.getInstance().getTime())) {
-			throw new InvalidDateException();
-		}
-		
-		if(!editorialService.findById(bookDto.getEditorial().getId()).isPresent()) {
-			throw new InvalidEditorialException();
-		}
-		
 		bookDto.setId(null);
 		return new BookDto(bookRepository.save(new Book(bookDto)));
 	}
 
 	@Override
 	public BookDto update(BookDto bookDto) {	
-		if(bookDto.getId()==0) {
-			throw new  InvalidIdException(bookDto.getId());
-		}
-		
-		if(bookDto.getPublish().after(Calendar.getInstance().getTime())) {
-			throw new InvalidDateException();
-		}
-		
-		if(!editorialService.findById(bookDto.getEditorial().getId()).isPresent()) {
-			throw new InvalidEditorialException();
-		}
-		
 		return new BookDto(bookRepository.save(new Book(bookDto)));	
 	}
 

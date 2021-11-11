@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
+import com.nttdata.nova.bookStore.exception.InvalidIdException;
 import com.nttdata.nova.bookStore.service.IEditorialService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,9 +39,15 @@ public class EditorialController {
     produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Insert editorial", description = "Inser editorial method", tags = {"EditorialRestService"})
 	public HttpEntity<EditorialDto> insertEditorial(@RequestBody EditorialDto editorial) {
+		if (editorial.getId() != 0) {
+			throw new InvalidIdException(editorial.getId());
+		}
 		
 		EditorialDto editorialDto = editorialService.save(editorial);
-		EditorialController.generateEditorialLinks(editorialDto);
+
+		if(editorialDto!=null) {
+			EditorialController.generateEditorialLinks(editorialDto);
+		}
 
 		return new ResponseEntity<EditorialDto>(editorialDto, HttpStatus.OK);
 	}
@@ -50,8 +57,15 @@ public class EditorialController {
 	produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update editorial", description = "Update editorial method", tags = {"EditorialRestService"})
 	public HttpEntity<EditorialDto> updateEditorial(@RequestBody EditorialDto editorial) {
+		if (editorial.getId() == 0) {
+			throw new InvalidIdException(editorial.getId());
+		}
+		
 		EditorialDto editorialDto = editorialService.update(editorial);
-		EditorialController.generateEditorialLinks(editorialDto);
+
+		if(editorialDto!=null) {
+			EditorialController.generateEditorialLinks(editorialDto);
+		}
 		
 		return new ResponseEntity<EditorialDto>(editorialDto, HttpStatus.OK);
 	}
@@ -69,7 +83,10 @@ public class EditorialController {
 	@Operation(summary = "Find an editorial by id", description = "Find an editorial by id method", tags = {"EditorialRestService"})		
 	public HttpEntity<EditorialDto> getEditorialById(@PathVariable("id") Long id){
 		EditorialDto editorialDto = editorialService.findById(id);
-		EditorialController.generateEditorialLinks(editorialDto);
+
+		if(editorialDto!=null) {
+			EditorialController.generateEditorialLinks(editorialDto);
+		}
 		
 		return new ResponseEntity<EditorialDto>(editorialDto, HttpStatus.OK);
 	}
@@ -79,7 +96,11 @@ public class EditorialController {
 	@Operation(summary = "Find an editorial by name", description = "Find an editorial by name method", tags = {"EditorialRestService"})	
 	public HttpEntity<List<EditorialDto>> getEditorialByName(@PathVariable("name") String name){
 		List<EditorialDto> editorialDtoList = editorialService.findByName(name);
-		editorialDtoList.forEach(e -> EditorialController.generateEditorialLinks(e));
+		editorialDtoList.forEach(e -> {
+			if(e!=null) {
+				EditorialController.generateEditorialLinks(e);
+			}
+		});
 		
 		return new ResponseEntity<List<EditorialDto>>(editorialDtoList, HttpStatus.OK);
 	}

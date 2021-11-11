@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
 import com.nttdata.nova.bookStore.entity.Editorial;
-import com.nttdata.nova.bookStore.exception.InvalidIdException;
 import com.nttdata.nova.bookStore.repository.IEditorialRepository;
 import com.nttdata.nova.bookStore.service.IEditorialService;
 
@@ -21,20 +20,12 @@ public class EditorialService implements IEditorialService {
 
 	@Override
 	public EditorialDto save(EditorialDto editorialDto) {
-		if (editorialDto.getId() != 0) {
-			throw new InvalidIdException(editorialDto.getId());
-		}
-
 		editorialDto.setId(null);
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 
 	@Override
 	public EditorialDto update(EditorialDto editorialDto) {
-		if (editorialDto.getId() == 0) {
-			throw new InvalidIdException(editorialDto.getId());
-		}
-
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 

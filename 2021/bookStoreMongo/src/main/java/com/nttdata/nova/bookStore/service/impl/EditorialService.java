@@ -21,20 +21,12 @@ public class EditorialService implements IEditorialService {
 
 	@Override
 	public EditorialDto save(EditorialDto editorialDto) {
-		if (editorialDto.getId() != 0) {
-			throw new InvalidIdException(editorialDto.getId());
-		}
-
 		editorialDto.setId(null);
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 
 	@Override
 	public EditorialDto update(EditorialDto editorialDto) {
-		if (editorialDto.getId() == 0) {
-			throw new InvalidIdException(editorialDto.getId());
-		}
-
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 

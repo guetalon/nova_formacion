@@ -21,8 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.nttdata.nova.bookStore.dto.BookDto;
 import com.nttdata.nova.bookStore.dto.BookRegistryDto;
 import com.nttdata.nova.bookStore.dto.EditorialDto;
+import com.nttdata.nova.bookStore.exception.InvalidDateException;
+import com.nttdata.nova.bookStore.exception.InvalidEditorialException;
+import com.nttdata.nova.bookStore.exception.InvalidIdException;
 import com.nttdata.nova.bookStore.service.IBookRegistryService;
 import com.nttdata.nova.bookStore.service.IBookService;
+import com.nttdata.nova.bookStore.service.IEditorialService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,30 +40,70 @@ public class BookController {
 
 	@Autowired
 	private IBookService bookService;
+	
+	@Autowired
+	private IEditorialService editorialService;
 
 	@Autowired
 	private IBookRegistryService bookRegistryService;
 	
 	@PostMapping(path = "/create", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Insert book", description = "Inser book method", tags = { "BookRestService" })
-	public HttpEntity<BookDto> insertEditorial(@RequestBody BookDto book) {
-		BookDto bookDto = bookService.save(book);
-		BookController.generateBookLinks(bookDto);
-		EditorialController.generateEditorialLinks(bookDto.getEditorial());
+	public HttpEntity<BookDto> insertBook(@RequestBody BookDto book) {
+		if(book.getId()!=0) {
+			throw new InvalidIdException(book.getId());
+		}
 		
-		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.CREATE, bookDto.getId()), Calendar.getInstance().getTime()));
+		if(book.getPublish().after(Calendar.getInstance().getTime())) {
+			throw new InvalidDateException();
+		}
+		
+		if(editorialService.findById(book.getEditorial().getId())!=null) {
+			throw new InvalidEditorialException();
+		}
+		
+		BookDto bookDto = bookService.save(book);
+
+		if(bookDto!=null) {
+			BookController.generateBookLinks(bookDto);
+		}
+		
+		if(bookDto!=null && bookDto.getEditorial()!=null) {
+			EditorialController.generateEditorialLinks(bookDto.getEditorial());
+		}
+		
+
+		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.CREATE, bookDto!=null ? bookDto.getId() : null), Calendar.getInstance().getTime()));
 
 		return new ResponseEntity<BookDto>(bookDto, HttpStatus.OK);
 	}
 
 	@PutMapping(path = "/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update book", description = "Update book method", tags = { "BookRestService" })
-	public HttpEntity<BookDto> updateEditorial(@RequestBody BookDto book) {
-		BookDto bookDto = bookService.update(book);
-		BookController.generateBookLinks(bookDto);
-		EditorialController.generateEditorialLinks(bookDto.getEditorial());
+	public HttpEntity<BookDto> updateBook(@RequestBody BookDto book) {
+		if(book.getId()==0) {
+			throw new  InvalidIdException(book.getId());
+		}
 		
-		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.UPDATE, bookDto.getId()), Calendar.getInstance().getTime()));
+		if(book.getPublish().after(Calendar.getInstance().getTime())) {
+			throw new InvalidDateException();
+		}
+		
+		if(editorialService.findById(book.getEditorial().getId())!=null) {
+			throw new InvalidEditorialException();
+		}
+		
+		BookDto bookDto = bookService.update(book);
+
+		if(bookDto!=null) {
+			BookController.generateBookLinks(bookDto);
+		}
+		
+		if(bookDto!=null && bookDto.getEditorial()!=null) {
+			EditorialController.generateEditorialLinks(bookDto.getEditorial());
+		}
+		
+		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.UPDATE, bookDto!=null ? bookDto.getId() : null), Calendar.getInstance().getTime()));
 
 		return new ResponseEntity<BookDto>(bookDto, HttpStatus.OK);
 	}
@@ -69,8 +113,13 @@ public class BookController {
 	public HttpEntity<List<BookDto>> getAllBooks() {
 		List<BookDto> bookDtoList = bookService.findAll();
 		bookDtoList.forEach(b -> {
-			BookController.generateBookLinks(b);
-			EditorialController.generateEditorialLinks(b.getEditorial());
+			if(b!=null) {
+				BookController.generateBookLinks(b);
+			}
+			
+			if(b!=null && b.getEditorial()!=null) {
+				EditorialController.generateEditorialLinks(b.getEditorial());
+			}
 		});
 		
 		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.FIND_ALL, null), Calendar.getInstance().getTime()));
@@ -82,10 +131,16 @@ public class BookController {
 	@Operation(summary = "Find a book by id", description = "Find a book by id method", tags = { "BookRestService" })
 	public HttpEntity<BookDto> getBookById(@PathVariable("id") Long id) {
 		BookDto bookDto = bookService.findById(id);
-		BookController.generateBookLinks(bookDto);
-		EditorialController.generateEditorialLinks(bookDto.getEditorial());
+
+		if(bookDto!=null) {
+			BookController.generateBookLinks(bookDto);
+		}
 		
-		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.FIND_ONE, bookDto.getId()), Calendar.getInstance().getTime()));
+		if(bookDto!=null && bookDto.getEditorial()!=null) {
+			EditorialController.generateEditorialLinks(bookDto.getEditorial());
+		}
+		
+		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.FIND_ONE, bookDto!=null ? bookDto.getId() : null), Calendar.getInstance().getTime()));
 
 		return new ResponseEntity<BookDto>(bookDto, HttpStatus.OK);
 	}
@@ -96,8 +151,13 @@ public class BookController {
 	public HttpEntity<List<BookDto>> getBooksByEditorial(@RequestBody EditorialDto editorial) {
 		List<BookDto> bookDtoList = bookService.searchByEditorial(editorial);
 		bookDtoList.forEach(b -> {
-			BookController.generateBookLinks(b);
-			EditorialController.generateEditorialLinks(b.getEditorial());
+			if(b!=null) {
+				BookController.generateBookLinks(b);
+			}
+			
+			if(b!=null && b.getEditorial()!=null) {
+				EditorialController.generateEditorialLinks(b.getEditorial());
+			}
 		});
 		
 		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.SEARCH, null), Calendar.getInstance().getTime()));
@@ -111,8 +171,13 @@ public class BookController {
 	public HttpEntity<List<BookDto>> getBooksByTitle(@PathVariable("title") String title) {
 		List<BookDto> bookDtoList = bookService.searchByTitle(title);
 		bookDtoList.forEach(b -> {
-			BookController.generateBookLinks(b);
-			EditorialController.generateEditorialLinks(b.getEditorial());
+			if(b!=null) {
+				BookController.generateBookLinks(b);
+			}
+			
+			if(b!=null && b.getEditorial()!=null) {
+				EditorialController.generateEditorialLinks(b.getEditorial());
+			}
 		});
 		
 		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.SEARCH, null), Calendar.getInstance().getTime()));
@@ -126,7 +191,7 @@ public class BookController {
 		BookDto book = bookService.findById(id);
 		bookService.delete(book);
 		
-		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.DELETE, id), Calendar.getInstance().getTime()));
+		bookRegistryService.save(new BookRegistryDto(generateRegistryMessage(bookOperation.DELETE, id!=null ? id : null), Calendar.getInstance().getTime()));
 
 
 		return new ResponseEntity<String>("Book with id=" + id + " was deleted", HttpStatus.OK);

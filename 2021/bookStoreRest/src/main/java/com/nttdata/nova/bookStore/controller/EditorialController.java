@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
+import com.nttdata.nova.bookStore.exception.InvalidIdException;
 import com.nttdata.nova.bookStore.service.IEditorialService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,10 @@ public class EditorialController {
     produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Insert editorial", description = "Inser editorial method", tags = {"EditorialRestService"})
 	public HttpEntity<EditorialDto> insertEditorial(@RequestBody EditorialDto editorial) {
+		if (editorial.getId() != 0) {
+			throw new InvalidIdException(editorial.getId());
+		}
+		
 		return new ResponseEntity<EditorialDto>(editorialService.save(editorial), HttpStatus.OK);
 	}
 	
@@ -43,6 +48,10 @@ public class EditorialController {
 	produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update editorial", description = "Update editorial method", tags = {"EditorialRestService"})
 	public HttpEntity<EditorialDto> updateEditorial(@RequestBody EditorialDto editorial) {
+		if (editorial.getId() == 0) {
+			throw new InvalidIdException(editorial.getId());
+		}
+		
 		return new ResponseEntity<EditorialDto>(editorialService.update(editorial), HttpStatus.OK);
 	}
 	

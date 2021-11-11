@@ -1,5 +1,6 @@
 package com.nttdata.nova.bookStore.controller;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nttdata.nova.bookStore.dto.BookDto;
 import com.nttdata.nova.bookStore.dto.EditorialDto;
+import com.nttdata.nova.bookStore.exception.InvalidDateException;
+import com.nttdata.nova.bookStore.exception.InvalidEditorialException;
+import com.nttdata.nova.bookStore.exception.InvalidIdException;
 import com.nttdata.nova.bookStore.service.IBookService;
+import com.nttdata.nova.bookStore.service.IEditorialService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,11 +36,27 @@ public class BookController {
 	@Autowired
 	private IBookService bookService;
 	
+	@Autowired
+	private IEditorialService editorialService;
+	
 	@PostMapping(path = "/create", 
     consumes = MediaType.APPLICATION_JSON_VALUE, 
     produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Insert book", description = "Inser book method", tags = {"BookRestService"})
-	public HttpEntity<BookDto> insertEditorial(@RequestBody BookDto book) {
+	public HttpEntity<BookDto> insertBook(@RequestBody BookDto book) {
+		if(book.getId()!=0) {
+			throw new InvalidIdException(book.getId());
+		}
+		
+		if(book.getPublish().after(Calendar.getInstance().getTime())) {
+			throw new InvalidDateException();
+		}
+		
+		if(editorialService.findById(book.getEditorial().getId())!=null) {
+			throw new InvalidEditorialException();
+		}
+		
+		
 		return new ResponseEntity<BookDto>(bookService.save(book), HttpStatus.OK);
 	}
 	
@@ -43,7 +64,20 @@ public class BookController {
 	consumes = MediaType.APPLICATION_JSON_VALUE, 
 	produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Update book", description = "Update book method", tags = {"BookRestService"})
-	public HttpEntity<BookDto> updateEditorial(@RequestBody BookDto book) {
+	public HttpEntity<BookDto> updateBook(@RequestBody BookDto book) {
+		if(book.getId()==0) {
+			throw new  InvalidIdException(book.getId());
+		}
+		
+		if(book.getPublish().after(Calendar.getInstance().getTime())) {
+			throw new InvalidDateException();
+		}
+		
+		if(editorialService.findById(book.getEditorial().getId())!=null) {
+			throw new InvalidEditorialException();
+		}
+		
+		
 		return new ResponseEntity<BookDto>(bookService.update(book), HttpStatus.OK);
 	}
 	

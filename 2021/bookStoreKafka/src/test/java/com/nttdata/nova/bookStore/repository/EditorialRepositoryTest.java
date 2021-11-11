@@ -1,4 +1,4 @@
-package com.nttdata.nova.bookStore;
+package com.nttdata.nova.bookStore.repository;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,7 +17,7 @@ import com.nttdata.nova.bookStore.repository.IEditorialRepository;
 
 @DataJpaTest
 @Sql("/createData.sql")
-class EditorialServiceTest {
+class EditorialRepositoryTest {
 	
 	@Autowired
 	private IEditorialRepository editorialRepository;
