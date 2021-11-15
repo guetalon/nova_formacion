@@ -1,4 +1,4 @@
-package com.nttdata.nova.bookStore.service;
+package com.nttdata.nova.bookStore.cache;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import com.nttdata.nova.bookStore.dto.EditorialDto;
 import com.nttdata.nova.bookStore.entity.Editorial;
 import com.nttdata.nova.bookStore.repository.IBookRepository;
+import com.nttdata.nova.bookStore.service.IBookService;
 
 @SpringBootTest()
 @EnableCaching

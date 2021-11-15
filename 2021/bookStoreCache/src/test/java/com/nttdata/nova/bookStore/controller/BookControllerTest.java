@@ -1,6 +1,7 @@
 package com.nttdata.nova.bookStore.controller;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -10,6 +11,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.nttdata.nova.bookStore.dto.EditorialDto;
 import com.nttdata.nova.bookStore.service.IBookRegistryService;
 import com.nttdata.nova.bookStore.service.IEditorialService;
 import com.nttdata.nova.bookStore.service.impl.BookService;
@@ -31,7 +33,13 @@ public class BookControllerTest {
 	private IBookRegistryService bookRegistryService;
 	
 	@Test
-	public void insertBookTest() throws Exception {	  
+	public void insertBookTest() throws Exception {	
+		EditorialDto editorial = new EditorialDto();
+		editorial.setId(Long.valueOf(1));
+		editorial.setName("Nova editions");
+		
+		BDDMockito.given(editorialService.findById(Long.valueOf(1))).willReturn(editorial);
+		
 		RequestBuilder request = MockMvcRequestBuilders
                 .post("/book/create")
                 .accept(MediaType.APPLICATION_JSON)
@@ -90,7 +98,13 @@ public class BookControllerTest {
 	
 	
 	@Test
-	public void updateBookTest() throws Exception {	  
+	public void updateBookTest() throws Exception {	
+		EditorialDto editorial = new EditorialDto();
+		editorial.setId(Long.valueOf(1));
+		editorial.setName("Nova editions");
+		
+		BDDMockito.given(editorialService.findById(Long.valueOf(1))).willReturn(editorial);
+		
 		RequestBuilder request = MockMvcRequestBuilders
                 .put("/book/update")
                 .accept(MediaType.APPLICATION_JSON)

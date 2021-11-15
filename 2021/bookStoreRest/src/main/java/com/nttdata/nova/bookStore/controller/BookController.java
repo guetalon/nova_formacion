@@ -52,7 +52,7 @@ public class BookController {
 			throw new InvalidDateException();
 		}
 		
-		if(editorialService.findById(book.getEditorial().getId())!=null) {
+		if(editorialService.findById(book.getEditorial().getId())==null) {
 			throw new InvalidEditorialException();
 		}
 		
@@ -73,7 +73,7 @@ public class BookController {
 			throw new InvalidDateException();
 		}
 		
-		if(editorialService.findById(book.getEditorial().getId())!=null) {
+		if(editorialService.findById(book.getEditorial().getId())==null) {
 			throw new InvalidEditorialException();
 		}
 		
