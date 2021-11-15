@@ -1,0 +1,14 @@
+server:
+  servlet.context-path: /bookstore
+  port: 8081
+
+spring:
+  cache:
+    type: redis 
+  redis:
+    host: 127.0.0.1
+    port: 6382
+
+logging:
+  level:
+    root: INFO
