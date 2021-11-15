@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
@@ -20,17 +22,20 @@ public class EditorialService implements IEditorialService {
 	private IEditorialRepository editorialRepository;
 
 	@Override
+	@CacheEvict(value="editorials", allEntries=true)
 	public EditorialDto save(EditorialDto editorialDto) {
 		editorialDto.setId(null);
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 
 	@Override
+	@CacheEvict(value="editorials", allEntries=true)
 	public EditorialDto update(EditorialDto editorialDto) {
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 
 	@Override
+	@CacheEvict(value="editorials", allEntries=true)
 	public void delete(EditorialDto editorialDto) {
 		editorialRepository.delete(new Editorial(editorialDto));
 	}

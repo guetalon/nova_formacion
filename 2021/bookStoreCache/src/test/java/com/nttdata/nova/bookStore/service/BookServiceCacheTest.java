@@ -3,23 +3,22 @@ package com.nttdata.nova.bookStore.service;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
-
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
-import com.nttdata.nova.bookStore.entity.Book;
 import com.nttdata.nova.bookStore.entity.Editorial;
 import com.nttdata.nova.bookStore.repository.IBookRepository;
 
 @SpringBootTest()
 @EnableCaching
+@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 public class BookServiceCacheTest {
 	
 	@Autowired

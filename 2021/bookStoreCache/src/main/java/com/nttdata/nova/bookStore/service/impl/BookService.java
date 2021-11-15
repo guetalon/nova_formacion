@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -22,17 +23,20 @@ public class BookService implements IBookService{
 	private IBookRepository bookRepository;
 	
 	@Override
+	@CacheEvict(value="books", allEntries=true)
 	public BookDto save(BookDto bookDto) {
 		bookDto.setId(null);
 		return new BookDto(bookRepository.save(new Book(bookDto)));
 	}
 
 	@Override
+	@CacheEvict(value="books", allEntries=true)
 	public BookDto update(BookDto bookDto) {	
 		return new BookDto(bookRepository.save(new Book(bookDto)));	
 	}
 
 	@Override
+	@CacheEvict(value="books", allEntries=true)
 	public void delete(BookDto bookDto) {
 		bookRepository.delete(new Book(bookDto));
 	}

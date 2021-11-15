@@ -21,7 +21,6 @@ public class RegistryControllerTest {
 	
 	@MockBean
 	private IBookRegistryService bookRegistryService;
-	
 
 	@Test
 	public void getAllRegistryTest() throws Exception {	  
