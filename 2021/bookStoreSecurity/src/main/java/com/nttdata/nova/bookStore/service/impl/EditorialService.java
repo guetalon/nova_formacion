@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
@@ -22,6 +22,7 @@ public class EditorialService implements IEditorialService {
 	private IEditorialRepository editorialRepository;
 
 	@Override
+	@PreAuthorize("hasRole('ADMIN')")
 	@CacheEvict(value="editorials", allEntries=true)
 	public EditorialDto save(EditorialDto editorialDto) {
 		editorialDto.setId(null);
@@ -30,17 +31,20 @@ public class EditorialService implements IEditorialService {
 
 	@Override
 	@CacheEvict(value="editorials", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public EditorialDto update(EditorialDto editorialDto) {
 		return new EditorialDto(editorialRepository.save(new Editorial(editorialDto)));
 	}
 
 	@Override
 	@CacheEvict(value="editorials", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public void delete(EditorialDto editorialDto) {
 		editorialRepository.delete(new Editorial(editorialDto));
 	}
 
 	@Override
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	@Cacheable("editorials")
 	public EditorialDto findById(Long id) {
 		Optional<Editorial> editorial = editorialRepository.findById(id);
@@ -49,6 +53,7 @@ public class EditorialService implements IEditorialService {
 
 	@Override
 	@Cacheable("editorials")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<EditorialDto> findAll() {
 		List<EditorialDto> editorialDtoList = new ArrayList<EditorialDto>();
 		
@@ -60,6 +65,7 @@ public class EditorialService implements IEditorialService {
 
 	@Override
 	@Cacheable("editorials")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<EditorialDto> findByName(String name) {
 		List<EditorialDto> editorialDtoList = new ArrayList<EditorialDto>();
 		

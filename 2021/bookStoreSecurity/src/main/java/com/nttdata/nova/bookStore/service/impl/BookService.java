@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.dto.BookDto;
@@ -24,6 +25,7 @@ public class BookService implements IBookService{
 	
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public BookDto save(BookDto bookDto) {
 		bookDto.setId(null);
 		return new BookDto(bookRepository.save(new Book(bookDto)));
@@ -31,18 +33,21 @@ public class BookService implements IBookService{
 
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public BookDto update(BookDto bookDto) {	
 		return new BookDto(bookRepository.save(new Book(bookDto)));	
 	}
 
 	@Override
 	@CacheEvict(value="books", allEntries=true)
+	@PreAuthorize("hasRole('ADMIN')")
 	public void delete(BookDto bookDto) {
 		bookRepository.delete(new Book(bookDto));
 	}
 
 	@Override
 	@Cacheable("books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public BookDto findById(Long id) {
 		Optional<Book> book = bookRepository.findById(id);			
 		return book.isPresent() ? new BookDto(book.get()) : null;
@@ -50,6 +55,7 @@ public class BookService implements IBookService{
 
 	@Override
 	@Cacheable("books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookDto> findAll() {
 		List<BookDto> bookDtoList = new ArrayList<BookDto>();
 		
@@ -62,6 +68,7 @@ public class BookService implements IBookService{
 	
 	@Override
 	@Cacheable("books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookDto> searchByTitle(String search) {
 		List<BookDto> bookDtoList = new ArrayList<BookDto>();
 		
@@ -73,6 +80,7 @@ public class BookService implements IBookService{
 
 	@Override
 	@Cacheable("books")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
 	public List<BookDto> searchByEditorial(EditorialDto editorialDto) {
 		List<BookDto> bookDtoList = new ArrayList<BookDto>();
 		
