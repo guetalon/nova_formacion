@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 
@@ -17,6 +18,7 @@ import com.nttdata.nova.bookStore.service.IEditorialService;
 @SpringBootTest()
 @EnableCaching
 @DirtiesContext(classMode = ClassMode.AFTER_CLASS)
+@WithMockUser(username="admin",roles={"ADMIN"})
 public class EditorialServiceCacheTest {
 	
 	@Autowired
