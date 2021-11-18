@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.nttdata.nova.bookStore.exception.InvalidDateException;
-import com.nttdata.nova.bookStore.exception.InvalidEditorialException;
 import com.nttdata.nova.bookStore.exception.InvalidIdException;
 
 
@@ -24,23 +22,6 @@ public class GlobalRestExceptionHandler{
 		result = new ExceptionResponse(EnumBusinessCodeError.BUSI_ID);
 		
 		LOG.error("Se ha producido un error de tipo InvalidIdException");
-		return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-	}
-	
-	@ExceptionHandler(InvalidDateException.class)
-	public HttpEntity<ExceptionResponse> invalidDateException(Exception e) {
-		result = new ExceptionResponse(EnumBusinessCodeError.BUSI_DATE);
-		
-		LOG.error("Se ha producido un error de tipo InvalidDateException");
-		return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-	}
-	
-	
-	@ExceptionHandler(InvalidEditorialException.class)
-	public HttpEntity<ExceptionResponse> invalidEditorialException(Exception e) {
-		result = new ExceptionResponse(EnumBusinessCodeError.BUSI_EDITORIAL);
-		
-		LOG.error("Se ha producido un error de tipo InvalidEditorialException");
 		return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
 	}
 

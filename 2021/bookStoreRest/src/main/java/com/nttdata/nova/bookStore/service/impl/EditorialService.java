@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.nttdata.nova.bookStore.dto.EditorialDto;
 import com.nttdata.nova.bookStore.entity.Editorial;
-import com.nttdata.nova.bookStore.exception.InvalidIdException;
 import com.nttdata.nova.bookStore.repository.IEditorialRepository;
 import com.nttdata.nova.bookStore.service.IEditorialService;
 

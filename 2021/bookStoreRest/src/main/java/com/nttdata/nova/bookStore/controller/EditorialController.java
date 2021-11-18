@@ -30,7 +30,7 @@ public class EditorialController {
 	
 	@Autowired
 	private IEditorialService editorialService;
-	
+
 	@PostMapping(path = "/create", 
     consumes = MediaType.APPLICATION_JSON_VALUE, 
     produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,6 +39,7 @@ public class EditorialController {
 		if (editorial.getId() != 0) {
 			throw new InvalidIdException(editorial.getId());
 		}
+		
 		
 		return new ResponseEntity<EditorialDto>(editorialService.save(editorial), HttpStatus.OK);
 	}
